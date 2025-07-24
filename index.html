@@ -2,35 +2,170 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Formulário Log</title>
-  <link rel="stylesheet" href="style.css" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Formulário Equipe LOG</title>
+  <style>
+    /* Seu estilo já existente, simplificado */
+    body, html {
+      height: 100vh;
+      background: linear-gradient(135deg, #f0f0f0, #e0f7ff);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Segoe UI', sans-serif;
+      margin: 0;
+    }
+    .container {
+      background: white;
+      padding: 40px;
+      border-radius: 20px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+      max-width: 600px;
+      width: 90%;
+      text-align: center;
+    }
+    h1, h2 {
+      color: #333;
+      margin-bottom: 20px;
+    }
+    textarea {
+      width: 100%;
+      height: 100px;
+      margin-top: 15px;
+      font-size: 1rem;
+      padding: 10px;
+      border-radius: 10px;
+      border: 1px solid #ccc;
+      resize: none;
+    }
+    button {
+      margin-top: 25px;
+      padding: 10px 25px;
+      background: #00aaff;
+      color: white;
+      font-size: 1rem;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+    }
+    button:hover {
+      background: #007fcc;
+    }
+  </style>
 </head>
 <body>
-  <div id="inicio" class="slide">
-    <h1>Formulário para a Equipe Log</h1>
-  </div>
-  <div id="regras" class="slide hidden">
-    <h2>Regras:</h2>
-    <ul>
-      <li>⏳ Você terá um tempo limite para cada pergunta.</li>
-      <li>❌ Ctrl+C / Ctrl+V serão bloqueados a partir da segunda pergunta.</li>
-      <li>🕵️‍♂️ Evite respostas genéricas.</li>
-    </ul>
-  </div>
-  <div id="iniciar" class="slide hidden">
-    <button onclick="iniciarFormulario()">Iniciar</button>
+  <div class="container">
+    <h1>📝 Formulário Equipe LOG</h1>
+    <div id="pergunta"></div>
+    <textarea id="resposta" placeholder="Digite sua resposta aqui..."></textarea><br />
+    <button id="enviar">Enviar</button>
   </div>
 
-  <div id="formulario" class="hidden blur-background">
-    <div class="form-card">
-      <div id="timer">⏱️ 20</div>
-      <h2 id="pergunta"></h2>
-      <input type="text" id="resposta" autocomplete="off" />
-      <button onclick="proxima()">Próxima</button>
-    </div>
-  </div>
+  <script>
+    const webhookBackendURL = "http://localhost:3000/enviar-formulario"; // seu backend rodando localmente
 
-  <script src="script.js"></script>
+    const secoes = [
+      {
+        titulo: "📝 INFORMAÇÕES INICIAIS",
+        perguntas: [
+          "1. Nome + ID Discord",
+          "2. Qual seu horário disponível pra ajudar na LOG?",
+          "3. Atua em alguma área da staff? Se sim, quais?",
+          "4. Já teve experiência como Equipe LOG? Se sim, me diga mais sobre."
+        ]
+      },
+      {
+        titulo: "🔧 CONHECIMENTOS BÁSICOS DE COMANDOS",
+        perguntas: [
+          "5. Pra que serve o comando /hackperma? E quando ele deve ser usado?",
+          "6. Em quais situações o /propmanager seria ideal para achar hacker?",
+          "7. Pra que serve o /delobjs? E em quais situações seria necessário usá-lo?",
+          "8. Pra que serve o /forcedelete? E por que ele pode ser usado quando o /delobjs não funcionar?",
+          "9. Como você poderia achar o hack que usa função do mod menu pra falar alto?",
+          "10. Se você banir um hacker e ele não for kikado da cidade, o que você poderia fazer?",
+          "11. Se você ver um hacker zaralhando na cidade, o que você faria?"
+        ]
+      },
+      {
+        titulo: "⚠️ COMPROMETIMENTO COM A EQUIPE",
+        perguntas: [
+          "12. Está ciente que terá uma meta semanal de 50 banimentos? (Sim ou Não)",
+          "13. Se alguém te marcar num ticket falando que o dinheiro dele sumiu, o que você faria?",
+          "14. Mostre que você estava atento nas perguntas: quais comandos citados acima não existem?"
+        ]
+      }
+    ];
+
+    let respostas = [];
+    let secaoAtual = 0;
+    let perguntaAtual = 0;
+
+    const perguntaDiv = document.getElementById("pergunta");
+    const respostaInput = document.getElementById("resposta");
+    const botao = document.getElementById("enviar");
+
+    function mostrarProximaPergunta() {
+      const secao = secoes[secaoAtual];
+
+      if (perguntaAtual >= secao.perguntas.length) {
+        if (secaoAtual + 1 >= secoes.length) {
+          enviarRespostas();
+          return;
+        } else {
+          if (confirm(`Você terminou a seção: "${secao.titulo}". Deseja continuar para a próxima seção?`)) {
+            secaoAtual++;
+            perguntaAtual = 0;
+            mostrarProximaPergunta();
+          } else {
+            alert("Formulário encerrado.");
+            return;
+          }
+          return;
+        }
+      }
+
+      perguntaDiv.innerText = `📘 ${secao.titulo}\n\n${secao.perguntas[perguntaAtual]}`;
+      respostaInput.value = "";
+      respostaInput.focus();
+    }
+
+    botao.addEventListener("click", () => {
+      const resposta = respostaInput.value.trim();
+      if (!resposta) {
+        alert("Por favor, preencha sua resposta antes de continuar.");
+        return;
+      }
+
+      const secao = secoes[secaoAtual];
+      respostas.push({
+        pergunta: secao.perguntas[perguntaAtual],
+        resposta
+      });
+
+      perguntaAtual++;
+      mostrarProximaPergunta();
+    });
+
+    async function enviarRespostas() {
+      try {
+        const response = await fetch(webhookBackendURL, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ respostas })
+        });
+
+        if (response.ok) {
+          alert("✅ Suas respostas foram enviadas com sucesso!");
+          window.location.reload();
+        } else {
+          alert("❌ Erro ao enviar respostas, tente novamente.");
+        }
+      } catch {
+        alert("❌ Erro ao enviar respostas, tente novamente.");
+      }
+    }
+
+    mostrarProximaPergunta();
+  </script>
 </body>
 </html>
