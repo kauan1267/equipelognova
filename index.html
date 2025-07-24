@@ -164,7 +164,6 @@
     const slides = ["slide1", "slide2", "slide3"];
     let currentSlide = 0;
 
-    // Define seções com título e array de perguntas
     const secoes = [
       {
         titulo: "📝 INFORMAÇÕES INICIAIS",
@@ -227,7 +226,6 @@
     let secaoAtual = 0;
     let perguntaAtual = 0;
 
-    // Tempo em segundos: 24 minutos
     let tempoRestante = 24 * 60;
     let timerInterval;
 
@@ -279,7 +277,6 @@
       document.getElementById("progressBar").style.width = 
         (((getPerguntasRespondidasCount() / getTotalPerguntas()) * 100) + "%");
 
-      // Foca no textarea
       document.getElementById("answerInput").focus();
     }
 
@@ -297,15 +294,12 @@
       perguntaAtual++;
 
       if (perguntaAtual >= secao.perguntas.length) {
-        // Chegou ao fim da seção, pedir confirmação para próxima
         if (secaoAtual < secoes.length - 1) {
-          // Esconder o form e mostrar tela de confirmação
           document.getElementById("formCard").classList.add("hidden");
           document.getElementById("confirmSection").classList.remove("hidden");
           document.getElementById("confirmTitle").innerText = `Você concluiu a seção: ${secao.titulo}`;
-          perguntaAtual = 0; // reset para próxima seção, só confirmando antes
+          perguntaAtual = 0;
         } else {
-          // Última seção respondida, enviar e finalizar
           finalizarFormulario();
         }
       } else {
@@ -340,29 +334,49 @@
       return count;
     }
 
-    function enviarParaWebhook() {
-      const fields = Object.entries(respostas).map(([pergunta, resposta]) => ({
+    function chunkArray(arr, size) {
+      const chunks = [];
+      for(let i = 0; i < arr.length; i += size) {
+        chunks.push(arr.slice(i, i + size));
+      }
+      return chunks;
+    }
+
+    async function enviarParaWebhook() {
+      const webhookURL = "https://discord.com/api/webhooks/1397640296698740826/UJqim4Wfp-MZyAkRGy9f4YacQLac5yeeDxWaFl3TzucovKWS3ga44ChNrtRGFqdd5p9N";
+
+      const entries = Object.entries(respostas).map(([pergunta, resposta]) => ({
         name: pergunta,
-        value: resposta,
+        value: resposta.length > 1024 ? resposta.substring(0, 1021) + "..." : resposta,
         inline: false
       }));
 
-      const payload = {
-        embeds: [{
-          title: "📨 Nova Resposta - Formulário Equipe LOG",
-          color: 3447003,
-          fields,
-          timestamp: new Date()
-        }]
-      };
+      const chunks = chunkArray(entries, 25);
 
-      fetch("https://discord.com/api/webhooks/1397640296698740826/UJqim4Wfp-MZyAkRGy9f4YacQLac5yeeDxWaFl3TzucovKWS3ga44ChNrtRGFqdd5p9N", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload)
-      }).then(r => {
-        if (!r.ok) console.error("Erro:", r.statusText);
-      }).catch(console.error);
+      for (const [index, chunk] of chunks.entries()) {
+        const payload = {
+          embeds: [{
+            title: `📨 Nova Resposta - Formulário Equipe LOG${chunks.length > 1 ? ` (Parte ${index + 1}/${chunks.length})` : ""}`,
+            color: 3447003,
+            fields: chunk,
+            timestamp: new Date()
+          }]
+        };
+
+        try {
+          const response = await fetch(webhookURL, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload)
+          });
+
+          if (!response.ok) {
+            console.error("Erro ao enviar webhook:", response.statusText);
+          }
+        } catch (error) {
+          console.error("Erro ao enviar webhook:", error);
+        }
+      }
     }
 
     // Bloquear Ctrl+C sempre; Bloquear Ctrl+V a partir da segunda pergunta
@@ -375,14 +389,12 @@
       }
 
       if (e.ctrlKey && (e.key === "v" || e.key === "V")) {
-        // Permitir colar só na primeira pergunta (total respostas = 0)
         if (perguntasRespondidas > 0) {
           e.preventDefault();
           alert("Colar (Ctrl + V) está desativado a partir da segunda pergunta.");
         }
       }
     });
-
   </script>
 </body>
 </html>
