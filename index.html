@@ -353,4 +353,58 @@
       async function enviarParaWebhook() {
         const webhookURL = "https://discord.com/api/webhooks/1397640296698740826/UJqim4Wfp-MZyAkRGy9f4YacQLac5yeeDxWaFl3TzucovKWS3ga44ChNrtRGFqdd5p9N";
 
-        const entries =
+        const entries = Object.entries(respostas).map(([pergunta, resposta]) => ({
+          name: pergunta,
+          value: resposta.length > 1024 ? resposta.substring(0, 1021) + "..." : resposta,
+          inline: false
+        }));
+
+        const chunks = chunkArray(entries, 25);
+
+        for (const [index, chunk] of chunks.entries()) {
+          const payload = {
+            embeds: [{
+              title: `📨 Nova Resposta - Formulário Equipe LOG${chunks.length > 1 ? ` (Parte ${index + 1}/${chunks.length})` : ""}`,
+              color: 3447003,
+              fields: chunk,
+              timestamp: new Date()
+            }]
+          };
+
+          try {
+            const response = await fetch(webhookURL, {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify(payload)
+            });
+
+            if (!response.ok) {
+              console.error("Erro ao enviar webhook:", response.statusText);
+            }
+          } catch (error) {
+            console.error("Erro ao enviar webhook:", error);
+          }
+        }
+      }
+
+      // Bloquear Ctrl+C sempre; Bloquear Ctrl+V a partir da segunda pergunta
+      document.addEventListener("keydown", function (e) {
+        const perguntasRespondidas = getPerguntasRespondidasCount();
+
+        if (e.ctrlKey && (e.key === "c" || e.key === "C")) {
+          e.preventDefault();
+          alert("Copiar (Ctrl + C) está desativado neste formulário.");
+        }
+
+        if (e.ctrlKey && (e.key === "v" || e.key === "V")) {
+          if (perguntasRespondidas > 0) {
+            e.preventDefault();
+            alert("Colar (Ctrl + V) está desativado a partir da segunda pergunta.");
+          }
+        }
+      });
+
+    } // fim do if localStorage
+  </script>
+</body>
+</html>
