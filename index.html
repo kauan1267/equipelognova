@@ -164,63 +164,55 @@
     const slides = ["slide1", "slide2", "slide3"];
     let currentSlide = 0;
 
-    const secoes = [
-      {
-        titulo: "📝 INFORMAÇÕES INICIAIS",
-        perguntas: [
-          "1. Nome + ID Discord",
-          "2. Qual seu horário disponível pra ajudar na LOG?",
-          "3. Atua em alguma área da staff? Se sim, quais?",
-          "4. Já teve experiência como Equipe LOG? Se sim, me diga mais sobre."
-        ]
-      },
-      {
-        titulo: "🔧 CONHECIMENTOS BÁSICOS DE COMANDOS",
-        perguntas: [
-          "5. Pra que serve o comando /hackperma? E quando ele deve ser usado?",
-          "6. Em quais situações o /propmanager seria ideal para achar hacker?",
-          "7. Pra que serve o /delobjs? E em quais situações seria necessário usá-lo?",
-          "8. Pra que serve o /forcedelete? E por que ele pode ser usado quando o /delobjs não funcionar?",
-          "9. Como você poderia achar o hack que usa função do mod menu pra falar alto?",
-          "10. Se você banir um hacker e ele não for kikado da cidade, o que você poderia fazer?",
-          "11. Se você ver um hacker zaralhando na cidade, o que você faria?",
-          "12. Está ciente que terá uma meta semanal de 50 banimentos? (Sim ou Não)",
-          "13. Se alguém te marcar num ticket falando que o dinheiro dele sumiu, o que você faria?",
-          "14. Mostre que você estava atento nas perguntas: quais comandos citados acima não existem?"
-        ]
-      },
-      {
-        titulo: "🧠 COMANDOS AVANÇADOS E ANÁLISE TÉCNICA",
-        perguntas: [
-          "15. O que é o comando /hban e para que serve?",
-          "16. Qual a diferença entre /hban e /hban2? Em que situações cada um deve ser usado?",
-          "17. Para que serve o comando /cleanarea? E qual a diferença para /cleanarea area?",
-          "18. Para que serve o comando /vozes e como ele ajuda na identificação de hacker?",
-          "19. Como o comando /wallconfig source pode ser usado em uma investigação?",
-          "20. Explique a função dos seguintes comandos e quando cada um deve ser usado:",
-          "• /bansrc source",
-          "• /kicksrc source",
-          "• /tptosrc source",
-          "• /idsrc source"
-        ]
-      },
-      {
-        titulo: "🔎 SITUAÇÕES PRÁTICAS E TOMADA DE DECISÃO",
-        perguntas: [
-          "21. Você viu um carro spawnado na praça e quer saber quem é o dono. Qual comando usaria e o que ele mostra?",
-          "22. Explique a importância de saber a diferença entre ID e source na identificação de hackers.",
-          "23. Caso um hacker esteja travando o /hban, como você agiria? Quais comandos usaria e em qual ordem?",
-          "24. Dê um exemplo prático de como você identificaria e lidaria com um ataque hacker envolvendo spawn de objetos e voz global."
-        ]
-      },
-      {
-        titulo: "⚠️ COMPROMETIMENTO COM A EQUIPE",
-        perguntas: [
-          "25. Você está ciente de que a equipe LOG é a principal responsável por combater hackers na cidade, e que a responsabilidade é alta? Está disposto a assumir esse compromisso sabendo que, caso não bata a meta semanal de banimentos, poderá ser removido da equipe?",
-          "Também está ciente de que em qualquer momento poderão ser feitas perguntas-surpresa sobre os comandos e situações citadas acima e, caso não saiba responder corretamente, poderá ser punido por estar colando ou não estar realmente preparado?"
-        ]
-      }
-    ];
+   const secoes = [
+  {
+    titulo: "📝 INFORMAÇÕES INICIAIS",
+    perguntas: [
+      "1. Nome + ID Discord",
+      "2. Qual seu horário disponível pra ajudar na LOG?",
+      "3. Atua em alguma área da staff? Se sim, quais? Já teve experiência como Equipe LOG? Se sim, me diga mais sobre."
+    ]
+  },
+  {
+    titulo: "🔧 CONHECIMENTOS BÁSICOS DE COMANDOS",
+    perguntas: [
+      "4. Pra que serve o comando /hackperma? E quando ele deve ser usado?",
+      "5. Em quais situações o /propmanager seria ideal para achar hacker?",
+      "6. Pra que servem os comandos /delobjs e /forcedelete? Explique a diferença e quando cada um deve ser usado.",
+      "7. Como você encontraria um hacker que usa mod menu para falar alto no jogo?",
+      "8. Se você banir um hacker e ele não for kikado da cidade, o que pode ser feito? E se você ver um hacker zaralhando, como agiria?",
+      "9. Se alguém te marcar num ticket falando que o dinheiro dele sumiu, o que você faria?",
+      "10. Mostre que prestou atenção: quais comandos citados acima não existem?"
+    ]
+  },
+  {
+    titulo: "🧠 COMANDOS AVANÇADOS E ANÁLISE TÉCNICA",
+    perguntas: [
+      "11. O que é o comando /hban e para que serve? Qual a diferença entre /hban e /hban2? Quando cada um é indicado?",
+      "12. Para que serve o comando /cleanarea? Qual a diferença entre /cleanarea e /cleanarea area?",
+      "13. Para que serve o comando /vozes e como ele ajuda na identificação de hackers?",
+      "14. Como o comando /wallconfig source pode ser usado em investigações?",
+      "15. Explique o uso dos comandos /bansrc, /kicksrc, /tptosrc e /idsrc. Em que casos cada um deve ser utilizado?"
+    ]
+  },
+  {
+    titulo: "🔎 SITUAÇÕES PRÁTICAS E TOMADA DE DECISÃO",
+    perguntas: [
+      "16. Você viu um carro spawnado na praça. Qual comando usaria para descobrir o dono? O que esse comando mostra?",
+      "17. Por que é importante saber a diferença entre ID e source na hora de identificar hackers?",
+      "18. Se um hacker estiver travando o /hban, o que fazer? Quais comandos você usaria e em qual ordem?",
+      "19. Dê um exemplo prático de como você lidaria com um ataque de hacker que envolve spam de objetos e voz global."
+    ]
+  },
+  {
+    titulo: "⚠️ COMPROMETIMENTO COM A EQUIPE",
+    perguntas: [
+      "20. Você está ciente de que a equipe LOG é a principal responsável por combater hackers na cidade, e que existe uma meta semanal de 50 banimentos? Está disposto a assumir esse compromisso?",
+      "21. Também está ciente que podem ocorrer perguntas-surpresa sobre comandos e situações acima? E que não saber responder pode gerar punições por não estar preparado ou por colar?"
+    ]
+  }
+];
+
 
     let respostas = {};
     let secaoAtual = 0;
