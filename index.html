@@ -3,20 +3,34 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Formulário LOG</title>
+  <title>Formulário Log</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <div id="intro">
-    <div class="slide">📝 <strong>Formulário para a Equipe Log</strong></div>
-    <div class="slide">⚠️ Regras:<br> - Não repita respostas<br> - Seja honesto<br> - Tempo: 30min</div>
-    <div class="slide"><button onclick="startForm()">Iniciar</button></div>
+  <div id="inicio" class="slide">
+    <h1>Formulário para a Equipe Log</h1>
   </div>
-  <div id="form-container" style="display:none;">
-    <div id="timer">⏳ 30:00</div>
-    <div id="form"></div>
-    <button id="nextBtn" onclick="nextQuestion()">Próxima</button>
+  <div id="regras" class="slide hidden">
+    <h2>Regras:</h2>
+    <ul>
+      <li>⏳ Você terá um tempo limite para cada pergunta.</li>
+      <li>❌ Ctrl+C / Ctrl+V serão bloqueados a partir da segunda pergunta.</li>
+      <li>🕵️‍♂️ Evite respostas genéricas.</li>
+    </ul>
   </div>
+  <div id="iniciar" class="slide hidden">
+    <button onclick="iniciarFormulario()">Iniciar</button>
+  </div>
+
+  <div id="formulario" class="hidden blur-background">
+    <div class="form-card">
+      <div id="timer">⏱️ 20</div>
+      <h2 id="pergunta"></h2>
+      <input type="text" id="resposta" autocomplete="off" />
+      <button onclick="proxima()">Próxima</button>
+    </div>
+  </div>
+
   <script src="script.js"></script>
 </body>
 </html>
