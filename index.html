@@ -192,60 +192,95 @@
   }
 
   async function enviarParaWebhook() {
-    const webhookURL = "https://discord.com/api/webhooks/1397640296698740826/UJqim4Wfp-MZyAkRGy9f4YacQLac5yeeDxWaFl3TzucovKWS3ga44ChNrtRGFqdd5p9N";
+  const webhookURL = "https://discord.com/api/webhooks/1397640296698740826/UJqim4Wfp-MZyAkRGy9f4YacQLac5yeeDxWaFl3TzucovKWS3ga44ChNrtRGFqdd5p9N";
 
-    const maxSmallResponseLength = 400; // respostas até 400 chars serão agrupadas
+  const maxSmallResponseLength = 400; // até 400 chars respostas pequenas
 
-    let combinedFields = [];
-    let tempCombinedName = "";
-    let tempCombinedValue = "";
+  let combinedFields = [];
+  let tempCombinedName = "";
+  let tempCombinedValue = "";
 
-    for (const [pergunta, resposta] of Object.entries(respostas)) {
-      const res = resposta || "Sem resposta";
+  for (const [pergunta, resposta] of Object.entries(respostas)) {
+    const res = resposta || "Sem resposta";
 
-      if (res.length <= maxSmallResponseLength) {
-        // Tentar juntar essa resposta com as anteriores pequenas
-        // +4 para \n\n e espaçamentos
-        if ((tempCombinedValue.length + res.length + 4) <= 1024) {
-          tempCombinedName += (tempCombinedName ? "\n\n" : "") + pergunta;
-          tempCombinedValue += (tempCombinedValue ? "\n\n" : "") + res;
-        } else {
-          // Campo temporário cheio, guardar e iniciar novo
-          combinedFields.push({
-            name: tempCombinedName || "Respostas agrupadas",
-            value: tempCombinedValue || "Sem resposta",
-            inline: false
-          });
-          tempCombinedName = pergunta;
-          tempCombinedValue = res;
-        }
+    if (res.length <= maxSmallResponseLength) {
+      if ((tempCombinedValue.length + res.length + 4) <= 1024) {
+        tempCombinedName += (tempCombinedName ? "\n\n" : "") + pergunta;
+        tempCombinedValue += (tempCombinedValue ? "\n\n" : "") + res;
       } else {
-        // Resposta longa: antes guardar o campo temporário agrupado
-        if (tempCombinedValue) {
+        combinedFields.push({
+          name: tempCombinedName || "Respostas agrupadas",
+          value: tempCombinedValue || "Sem resposta",
+          inline: false
+        });
+        tempCombinedName = pergunta;
+        tempCombinedValue = res;
+      }
+    } else {
+      if (tempCombinedValue) {
+        combinedFields.push({
+          name: tempCombinedName || "Respostas agrupadas",
+          value: tempCombinedValue || "Sem resposta",
+          inline: false
+        });
+        tempCombinedName = "";
+        tempCombinedValue = "";
+      }
+
+      // Divide respostas longas
+      const partes = splitLongText(res, 1024);
+      if (partes.length === 1) {
+        combinedFields.push({
+          name: pergunta,
+          value: partes[0],
+          inline: false
+        });
+      } else {
+        partes.forEach((parte, i) => {
           combinedFields.push({
-            name: tempCombinedName || "Respostas agrupadas",
-            value: tempCombinedValue || "Sem resposta",
+            name: `${pergunta} (parte ${i + 1}/${partes.length})`,
+            value: parte,
             inline: false
           });
-          tempCombinedName = "";
-          tempCombinedValue = "";
-        }
+        });
+      }
+    }
+  }
 
-        // Dividir resposta longa em pedaços
-        const partes = splitLongText(res, 1024);
+  // Após o loop, envia o que ficou pendente agrupado
+  if (tempCombinedValue) {
+    combinedFields.push({
+      name: tempCombinedName || "Respostas agrupadas",
+      value: tempCombinedValue || "Sem resposta",
+      inline: false
+    });
+  }
 
-        if (partes.length === 1) {
-          combinedFields.push({
-            name: pergunta,
-            value: partes[0],
-            inline: false
-          });
-        } else {
-          partes.forEach((parte, i) => {
-            combinedFields.push({
-              name: `${pergunta} (parte ${i + 1}/${partes.length})`,
-              value: parte,
-              inline: false
-            });
-          });
-        }
+  // Agora dividimos em chunks de 25 campos (limite Discord)
+  const chunks = chunkArray(combinedFields, 25);
+
+  for (const [index, chunk] of chunks.entries()) {
+    const payload = {
+      embeds: [{
+        title: `📨 Nova Resposta - Formulário Equipe LOG${chunks.length > 1 ? ` (Parte ${index + 1}/${chunks.length})` : ""}`,
+        color: 3447003,
+        fields: chunk,
+        timestamp: new Date()
+      }]
+    };
+
+    try {
+      const response = await fetch(webhookURL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+      });
+
+      if (!response.ok) {
+        console.error("Erro ao enviar webhook:", response.statusText);
+      }
+    } catch (error) {
+      console.error("Erro ao enviar webhook:", error);
+    }
+  }
+}
