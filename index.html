@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Formulário LOG</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div id="intro">
+    <div class="slide">📝 <strong>Formulário para a Equipe Log</strong></div>
+    <div class="slide">⚠️ Regras:<br> - Não repita respostas<br> - Seja honesto<br> - Tempo: 30min</div>
+    <div class="slide"><button onclick="startForm()">Iniciar</button></div>
+  </div>
+  <div id="form-container" style="display:none;">
+    <div id="timer">⏳ 30:00</div>
+    <div id="form"></div>
+    <button id="nextBtn" onclick="nextQuestion()">Próxima</button>
+  </div>
+  <script src="script.js"></script>
+</body>
+</html>

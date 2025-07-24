@@ -1,0 +1,43 @@
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  background: #111;
+  color: #eee;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  overflow: hidden;
+}
+#intro, #form-container {
+  text-align: center;
+}
+.slide {
+  display: none;
+  font-size: 1.5rem;
+  margin: 20px;
+}
+.slide.active {
+  display: block;
+}
+button {
+  background: #00cc99;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  font-size: 1rem;
+  cursor: pointer;
+  border-radius: 8px;
+}
+#timer {
+  font-size: 1.2rem;
+  margin-bottom: 10px;
+}
+input, textarea {
+  width: 100%;
+  padding: 10px;
+  margin: 10px 0;
+  border-radius: 8px;
+  border: none;
+}
