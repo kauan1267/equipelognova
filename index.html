@@ -1,400 +1,251 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Formulário Equipe LOG</title>
-  <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-      font-family: 'Segoe UI', sans-serif;
-    }
-    body, html {
-      height: 100vh;
-      background: linear-gradient(135deg, #f0f0f0, #e0f7ff);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding-bottom: 40px; /* espaço para o footer fixo */
-      position: relative;
-      min-height: 100vh;
-    }
-    .card {
-      background: white;
-      border-radius: 20px;
-      padding: 40px;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-      max-width: 600px;
-      width: 90%;
-      text-align: center;
-      animation: fadeIn 0.8s ease;
-      position: relative;
-    }
-    h1, h2 {
-      color: #333;
-      margin-bottom: 20px;
-    }
-    p, li {
-      color: #555;
-      font-size: 1rem;
-    }
-    ul {
-      text-align: left;
-      margin: 20px auto;
-      display: inline-block;
-    }
-    li {
-      margin: 10px 0;
-    }
-    button {
-      margin-top: 30px;
-      padding: 10px 25px;
-      background: #00aaff;
-      color: white;
-      font-size: 1rem;
-      border: none;
-      border-radius: 10px;
-      cursor: pointer;
-      transition: background 0.3s;
-    }
-    button:hover {
-      background: #007fcc;
-    }
-    .hidden {
-      display: none;
-    }
-    .progress-container {
-      background: #eee;
-      border-radius: 8px;
-      overflow: hidden;
-      height: 10px;
-      margin: 20px 0;
-    }
-    .progress-bar {
-      width: 0%;
-      height: 100%;
-      background: #00aaff;
-      transition: width 0.4s ease;
-    }
-    textarea {
-      width: 100%;
-      height: 100px;
-      font-size: 1rem;
-      padding: 10px;
-      border: 1px solid #ccc;
-      border-radius: 10px;
-      resize: none;
-      margin-top: 15px;
-    }
-    .timer {
-      position: absolute;
-      top: 20px;
-      right: 25px;
-      background: #007fcc;
-      color: white;
-      padding: 6px 14px;
-      border-radius: 8px;
-      font-weight: bold;
-      font-size: 0.9rem;
-    }
-    footer {
-      position: fixed;
-      bottom: 10px;
-      width: 100%;
-      text-align: center;
-      font-size: 0.85rem;
-      color: #555;
-      font-family: 'Segoe UI', sans-serif;
-      user-select: none;
-      pointer-events: none;
-    }
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(30px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-  </style>
-</head>
-<body>
-  <div class="card" id="slide1">
-    <h1>📝 Formulário da Equipe LOG</h1>
-    <p>Bem-vindo! Essa avaliação é importante para definir sua entrada na equipe.</p>
-  </div>
+<script>
+  const slides = ["slide1", "slide2", "slide3"];
+  let currentSlide = 0;
 
-  <div class="card hidden" id="slide2">
-    <h2>📋 Regras</h2>
-    <ul>
-      <li>⛔ Não cole respostas prontas (Ctrl + V é bloqueado a partir da segunda pergunta)</li>
-      <li>⏳ Você tem 24 minutos</li>
-      <li>❌ Não poderá refazer após enviar</li>
-    </ul>
-  </div>
-
-  <div class="card hidden" id="slide3">
-    <h2>🚀 Pronto para começar?</h2>
-    <button onclick="startForm()">Iniciar Formulário</button>
-  </div>
-
-  <div class="card hidden" id="formCard">
-    <div class="timer" id="timer">24:00</div>
-    <div class="progress-container">
-      <div class="progress-bar" id="progressBar"></div>
-    </div>
-    <h2 id="sectionTitle"></h2>
-    <h3 id="questionText"></h3>
-    <textarea id="answerInput" placeholder="Digite sua resposta aqui..."></textarea><br>
-    <button id="nextBtn" onclick="nextQuestion()">Próxima</button>
-  </div>
-
-  <div class="card hidden" id="confirmSection">
-    <h2 id="confirmTitle"></h2>
-    <p id="confirmText">Deseja continuar para a próxima seção?</p>
-    <button onclick="continueSection()">Sim, continuar</button>
-  </div>
-
-  <div class="card hidden" id="finalPage">
-    <h2>🎯 Formulário enviado!</h2>
-    <p>Aguarde a aprovação do seu formulário.<br><strong>✅ Boa sorte!</strong></p>
-  </div>
-
-  <footer>Site desenvolvido por: 77sombraa</footer>
-
-  <script>
-    const slides = ["slide1", "slide2", "slide3"];
-    let currentSlide = 0;
-
-    const secoes = [
-      {
-        titulo: "📝 INFORMAÇÕES INICIAIS",
-        perguntas: [
-          "1. Nome + ID Discord",
-          "2. Qual seu horário disponível pra ajudar na LOG?",
-          "3. Atua em alguma área da staff? Se sim, quais?",
-          "4. Já teve experiência como Equipe LOG? Se sim, me diga mais sobre."
-        ]
-      },
-      {
-        titulo: "🔧 CONHECIMENTOS BÁSICOS DE COMANDOS",
-        perguntas: [
-          "5. Pra que serve o comando /hackperma? E quando ele deve ser usado?",
-          "6. Em quais situações o /propmanager seria ideal para achar hacker?",
-          "7. Pra que serve o /delobjs? E em quais situações seria necessário usá-lo?",
-          "8. Pra que serve o /forcedelete? E por que ele pode ser usado quando o /delobjs não funcionar?",
-          "9. Como você poderia achar o hack que usa função do mod menu pra falar alto?",
-          "10. Se você banir um hacker e ele não for kikado da cidade, o que você poderia fazer?",
-          "11. Se você ver um hacker zaralhando na cidade, o que você faria?",
-          "12. Está ciente que terá uma meta semanal de 50 banimentos? (Sim ou Não)",
-          "13. Se alguém te marcar num ticket falando que o dinheiro dele sumiu, o que você faria?",
-          "14. Mostre que você estava atento nas perguntas: quais comandos citados acima não existem?"
-        ]
-      },
-      {
-        titulo: "🧠 COMANDOS AVANÇADOS E ANÁLISE TÉCNICA",
-        perguntas: [
-          "15. O que é o comando /hban e para que serve?",
-          "16. Qual a diferença entre /hban e /hban2? Em que situações cada um deve ser usado?",
-          "17. Para que serve o comando /cleanarea? E qual a diferença para /cleanarea area?",
-          "18. Para que serve o comando /vozes e como ele ajuda na identificação de hacker?",
-          "19. Como o comando /wallconfig source pode ser usado em uma investigação?",
-          "20. Explique a função dos seguintes comandos e quando cada um deve ser usado:",
-          "• /bansrc source",
-          "• /kicksrc source",
-          "• /tptosrc source",
-          "• /idsrc source"
-        ]
-      },
-      {
-        titulo: "🔎 SITUAÇÕES PRÁTICAS E TOMADA DE DECISÃO",
-        perguntas: [
-          "21. Você viu um carro spawnado na praça e quer saber quem é o dono. Qual comando usaria e o que ele mostra?",
-          "22. Explique a importância de saber a diferença entre ID e source na identificação de hackers.",
-          "23. Caso um hacker esteja travando o /hban, como você agiria? Quais comandos usaria e em qual ordem?",
-          "24. Dê um exemplo prático de como você identificaria e lidaria com um ataque hacker envolvendo spawn de objetos e voz global."
-        ]
-      },
-      {
-        titulo: "⚠️ COMPROMETIMENTO COM A EQUIPE",
-        perguntas: [
-          "25. Você está ciente de que a equipe LOG é a principal responsável por combater hackers na cidade, e que a responsabilidade é alta? Está disposto a assumir esse compromisso sabendo que, caso não bata a meta semanal de banimentos, poderá ser removido da equipe?",
-          "Também está ciente de que em qualquer momento poderão ser feitas perguntas-surpresa sobre os comandos e situações citadas acima e, caso não saiba responder corretamente, poderá ser punido por estar colando ou não estar realmente preparado?"
-        ]
-      }
-    ];
-
-    let respostas = {};
-    let secaoAtual = 0;
-    let perguntaAtual = 0;
-
-    let tempoRestante = 24 * 60;
-    let timerInterval;
-
-    function showSlide(index) {
-      if (slides[index - 1]) document.getElementById(slides[index - 1]).classList.add("hidden");
-      if (slides[index]) document.getElementById(slides[index]).classList.remove("hidden");
+  const secoes = [
+    {
+      titulo: "📝 INFORMAÇÕES INICIAIS",
+      perguntas: [
+        "1. Nome + ID Discord",
+        "2. Qual seu horário disponível pra ajudar na LOG?",
+        "3. Atua em alguma área da staff? Se sim, quais?",
+        "4. Já teve experiência como Equipe LOG? Se sim, me diga mais sobre."
+      ]
+    },
+    {
+      titulo: "🔧 CONHECIMENTOS BÁSICOS DE COMANDOS",
+      perguntas: [
+        "5. Pra que serve o comando /hackperma? E quando ele deve ser usado?",
+        "6. Em quais situações o /propmanager seria ideal para achar hacker?",
+        "7. Pra que serve o /delobjs? E em quais situações seria necessário usá-lo?",
+        "8. Pra que serve o /forcedelete? E por que ele pode ser usado quando o /delobjs não funcionar?",
+        "9. Como você poderia achar o hack que usa função do mod menu pra falar alto?",
+        "10. Se você banir um hacker e ele não for kikado da cidade, o que você poderia fazer?",
+        "11. Se você ver um hacker zaralhando na cidade, o que você faria?",
+        "12. Está ciente que terá uma meta semanal de 50 banimentos? (Sim ou Não)",
+        "13. Se alguém te marcar num ticket falando que o dinheiro dele sumiu, o que você faria?",
+        "14. Mostre que você estava atento nas perguntas: quais comandos citados acima não existem?"
+      ]
+    },
+    {
+      titulo: "🧠 COMANDOS AVANÇADOS E ANÁLISE TÉCNICA",
+      perguntas: [
+        "15. O que é o comando /hban e para que serve?",
+        "16. Qual a diferença entre /hban e /hban2? Em que situações cada um deve ser usado?",
+        "17. Para que serve o comando /cleanarea? E qual a diferença para /cleanarea area?",
+        "18. Para que serve o comando /vozes e como ele ajuda na identificação de hacker?",
+        "19. Como o comando /wallconfig source pode ser usado em uma investigação?",
+        "20. Explique a função dos seguintes comandos e quando cada um deve ser usado:",
+        "• /bansrc source",
+        "• /kicksrc source",
+        "• /tptosrc source",
+        "• /idsrc source"
+      ]
+    },
+    {
+      titulo: "🔎 SITUAÇÕES PRÁTICAS E TOMADA DE DECISÃO",
+      perguntas: [
+        "21. Você viu um carro spawnado na praça e quer saber quem é o dono. Qual comando usaria e o que ele mostra?",
+        "22. Explique a importância de saber a diferença entre ID e source na identificação de hackers.",
+        "23. Caso um hacker esteja travando o /hban, como você agiria? Quais comandos usaria e em qual ordem?",
+        "24. Dê um exemplo prático de como você identificaria e lidaria com um ataque hacker envolvendo spawn de objetos e voz global."
+      ]
+    },
+    {
+      titulo: "⚠️ COMPROMETIMENTO COM A EQUIPE",
+      perguntas: [
+        "25. Você está ciente de que a equipe LOG é a principal responsável por combater hackers na cidade, e que a responsabilidade é alta? Está disposto a assumir esse compromisso sabendo que, caso não bata a meta semanal de banimentos, poderá ser removido da equipe?",
+        "Também está ciente de que em qualquer momento poderão ser feitas perguntas-surpresa sobre os comandos e situações citadas acima e, caso não saiba responder corretamente, poderá ser punido por estar colando ou não estar realmente preparado?"
+      ]
     }
+  ];
 
-    let slideInterval = setInterval(() => {
-      currentSlide++;
-      if (currentSlide < slides.length) {
-        showSlide(currentSlide);
-      } else {
-        clearInterval(slideInterval);
-      }
-    }, 3500);
+  let respostas = {};
+  let secaoAtual = 0;
+  let perguntaAtual = 0;
 
-    function startForm() {
-      slides.forEach(id => document.getElementById(id).classList.add("hidden"));
-      document.getElementById("formCard").classList.remove("hidden");
-      perguntaAtual = 0;
-      secaoAtual = 0;
-      mostrarPergunta();
-      iniciarContador();
+  let tempoRestante = 24 * 60;
+  let timerInterval;
+
+  function showSlide(index) {
+    if (slides[index - 1]) document.getElementById(slides[index - 1]).classList.add("hidden");
+    if (slides[index]) document.getElementById(slides[index]).classList.remove("hidden");
+  }
+
+  let slideInterval = setInterval(() => {
+    currentSlide++;
+    if (currentSlide < slides.length) {
+      showSlide(currentSlide);
+    } else {
+      clearInterval(slideInterval);
     }
+  }, 3500);
 
-    function iniciarContador() {
-      const timerDisplay = document.getElementById("timer");
-      timerInterval = setInterval(() => {
-        if (tempoRestante <= 0) {
-          clearInterval(timerInterval);
-          document.getElementById("formCard").innerHTML = "<h2>⏱ Tempo esgotado! Formulário encerrado.</h2>";
-          return;
-        }
-        const minutos = Math.floor(tempoRestante / 60);
-        const segundos = tempoRestante % 60;
-        timerDisplay.textContent = `${minutos.toString().padStart(2, '0')}:${segundos.toString().padStart(2, '0')}`;
-        tempoRestante--;
-      }, 1000);
-    }
+  function startForm() {
+    slides.forEach(id => document.getElementById(id).classList.add("hidden"));
+    document.getElementById("formCard").classList.remove("hidden");
+    perguntaAtual = 0;
+    secaoAtual = 0;
+    mostrarPergunta();
+    iniciarContador();
+  }
 
-    function mostrarPergunta() {
-      const secao = secoes[secaoAtual];
-      const pergunta = secao.perguntas[perguntaAtual];
-
-      document.getElementById("sectionTitle").innerText = secao.titulo;
-      document.getElementById("questionText").innerText = pergunta;
-      document.getElementById("answerInput").value = "";
-      document.getElementById("progressBar").style.width = 
-        (((getPerguntasRespondidasCount() / getTotalPerguntas()) * 100) + "%");
-
-      document.getElementById("answerInput").focus();
-    }
-
-    function nextQuestion() {
-      const resposta = document.getElementById("answerInput").value.trim();
-      if (!resposta) {
-        alert("Por favor, responda antes de continuar.");
+  function iniciarContador() {
+    const timerDisplay = document.getElementById("timer");
+    timerInterval = setInterval(() => {
+      if (tempoRestante <= 0) {
+        clearInterval(timerInterval);
+        document.getElementById("formCard").innerHTML = "<h2>⏱ Tempo esgotado! Formulário encerrado.</h2>";
         return;
       }
+      const minutos = Math.floor(tempoRestante / 60);
+      const segundos = tempoRestante % 60;
+      timerDisplay.textContent = `${minutos.toString().padStart(2, '0')}:${segundos.toString().padStart(2, '0')}`;
+      tempoRestante--;
+    }, 1000);
+  }
 
-      const secao = secoes[secaoAtual];
-      const pergunta = secao.perguntas[perguntaAtual];
+  function mostrarPergunta() {
+    const secao = secoes[secaoAtual];
+    const pergunta = secao.perguntas[perguntaAtual];
 
-      respostas[pergunta] = resposta;
-      perguntaAtual++;
+    document.getElementById("sectionTitle").innerText = secao.titulo;
+    document.getElementById("questionText").innerText = pergunta;
+    document.getElementById("answerInput").value = "";
+    document.getElementById("progressBar").style.width = 
+      (((getPerguntasRespondidasCount() / getTotalPerguntas()) * 100) + "%");
 
-      if (perguntaAtual >= secao.perguntas.length) {
-        if (secaoAtual < secoes.length - 1) {
-          document.getElementById("formCard").classList.add("hidden");
-          document.getElementById("confirmSection").classList.remove("hidden");
-          document.getElementById("confirmTitle").innerText = `Você concluiu a seção: ${secao.titulo}`;
-          perguntaAtual = 0;
-        } else {
-          finalizarFormulario();
-        }
-      } else {
-        mostrarPergunta();
-      }
+    document.getElementById("answerInput").focus();
+  }
+
+  function nextQuestion() {
+    const resposta = document.getElementById("answerInput").value.trim();
+    if (!resposta) {
+      alert("Por favor, responda antes de continuar.");
+      return;
     }
 
-    function continueSection() {
-      document.getElementById("confirmSection").classList.add("hidden");
-      document.getElementById("formCard").classList.remove("hidden");
-      secaoAtual++;
+    const secao = secoes[secaoAtual];
+    const pergunta = secao.perguntas[perguntaAtual];
+
+    respostas[pergunta] = resposta;
+    perguntaAtual++;
+
+    if (perguntaAtual >= secao.perguntas.length) {
+      if (secaoAtual < secoes.length - 1) {
+        document.getElementById("formCard").classList.add("hidden");
+        document.getElementById("confirmSection").classList.remove("hidden");
+        document.getElementById("confirmTitle").innerText = `Você concluiu a seção: ${secao.titulo}`;
+        perguntaAtual = 0;
+      } else {
+        finalizarFormulario();
+      }
+    } else {
       mostrarPergunta();
     }
+  }
 
-    function finalizarFormulario() {
-      document.getElementById("formCard").classList.add("hidden");
-      document.getElementById("finalPage").classList.remove("hidden");
-      clearInterval(timerInterval);
-      enviarParaWebhook();
+  function continueSection() {
+    document.getElementById("confirmSection").classList.add("hidden");
+    document.getElementById("formCard").classList.remove("hidden");
+    secaoAtual++;
+    mostrarPergunta();
+  }
+
+  function finalizarFormulario() {
+    document.getElementById("formCard").classList.add("hidden");
+    document.getElementById("finalPage").classList.remove("hidden");
+    clearInterval(timerInterval);
+    enviarParaWebhook();
+  }
+
+  function getTotalPerguntas() {
+    return secoes.reduce((acc, s) => acc + s.perguntas.length, 0);
+  }
+
+  function getPerguntasRespondidasCount() {
+    let count = 0;
+    for(let i = 0; i < secaoAtual; i++) {
+      count += secoes[i].perguntas.length;
     }
+    count += perguntaAtual;
+    return count;
+  }
 
-    function getTotalPerguntas() {
-      return secoes.reduce((acc, s) => acc + s.perguntas.length, 0);
+  function chunkArray(arr, size) {
+    const chunks = [];
+    for(let i = 0; i < arr.length; i += size) {
+      chunks.push(arr.slice(i, i + size));
     }
+    return chunks;
+  }
 
-    function getPerguntasRespondidasCount() {
-      let count = 0;
-      for(let i = 0; i < secaoAtual; i++) {
-        count += secoes[i].perguntas.length;
-      }
-      count += perguntaAtual;
-      return count;
+  // Função para dividir textos longos em pedaços <= 1024 caracteres (limite do Discord)
+  function splitLongText(text, maxLength = 1024) {
+    const result = [];
+    let start = 0;
+    while (start < text.length) {
+      result.push(text.substring(start, start + maxLength));
+      start += maxLength;
     }
+    return result;
+  }
 
-    function chunkArray(arr, size) {
-      const chunks = [];
-      for(let i = 0; i < arr.length; i += size) {
-        chunks.push(arr.slice(i, i + size));
-      }
-      return chunks;
-    }
+  async function enviarParaWebhook() {
+    const webhookURL = "https://discord.com/api/webhooks/1397640296698740826/UJqim4Wfp-MZyAkRGy9f4YacQLac5yeeDxWaFl3TzucovKWS3ga44ChNrtRGFqdd5p9N";
 
-    async function enviarParaWebhook() {
-      const webhookURL = "https://discord.com/api/webhooks/1397640296698740826/UJqim4Wfp-MZyAkRGy9f4YacQLac5yeeDxWaFl3TzucovKWS3ga44ChNrtRGFqdd5p9N";
+    const maxSmallResponseLength = 400; // respostas até 400 chars serão agrupadas
 
-      const entries = Object.entries(respostas).map(([pergunta, resposta]) => ({
-        name: pergunta,
-        value: resposta.length > 1024 ? resposta.substring(0, 1021) + "..." : resposta,
-        inline: false
-      }));
+    let combinedFields = [];
+    let tempCombinedName = "";
+    let tempCombinedValue = "";
 
-      const chunks = chunkArray(entries, 25);
+    for (const [pergunta, resposta] of Object.entries(respostas)) {
+      const res = resposta || "Sem resposta";
 
-      for (const [index, chunk] of chunks.entries()) {
-        const payload = {
-          embeds: [{
-            title: `📨 Nova Resposta - Formulário Equipe LOG${chunks.length > 1 ? ` (Parte ${index + 1}/${chunks.length})` : ""}`,
-            color: 3447003,
-            fields: chunk,
-            timestamp: new Date()
-          }]
-        };
-
-        try {
-          const response = await fetch(webhookURL, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(payload)
+      if (res.length <= maxSmallResponseLength) {
+        // Tentar juntar essa resposta com as anteriores pequenas
+        // +4 para \n\n e espaçamentos
+        if ((tempCombinedValue.length + res.length + 4) <= 1024) {
+          tempCombinedName += (tempCombinedName ? "\n\n" : "") + pergunta;
+          tempCombinedValue += (tempCombinedValue ? "\n\n" : "") + res;
+        } else {
+          // Campo temporário cheio, guardar e iniciar novo
+          combinedFields.push({
+            name: tempCombinedName || "Respostas agrupadas",
+            value: tempCombinedValue || "Sem resposta",
+            inline: false
           });
-
-          if (!response.ok) {
-            console.error("Erro ao enviar webhook:", response.statusText);
-          }
-        } catch (error) {
-          console.error("Erro ao enviar webhook:", error);
+          tempCombinedName = pergunta;
+          tempCombinedValue = res;
         }
-      }
-    }
-
-    // Bloquear Ctrl+C sempre; Bloquear Ctrl+V a partir da segunda pergunta
-    document.addEventListener("keydown", function (e) {
-      const perguntasRespondidas = getPerguntasRespondidasCount();
-
-      if (e.ctrlKey && (e.key === "c" || e.key === "C")) {
-        e.preventDefault();
-        alert("Copiar (Ctrl + C) está desativado neste formulário.");
-      }
-
-      if (e.ctrlKey && (e.key === "v" || e.key === "V")) {
-        if (perguntasRespondidas > 0) {
-          e.preventDefault();
-          alert("Colar (Ctrl + V) está desativado a partir da segunda pergunta.");
+      } else {
+        // Resposta longa: antes guardar o campo temporário agrupado
+        if (tempCombinedValue) {
+          combinedFields.push({
+            name: tempCombinedName || "Respostas agrupadas",
+            value: tempCombinedValue || "Sem resposta",
+            inline: false
+          });
+          tempCombinedName = "";
+          tempCombinedValue = "";
         }
-      }
-    });
-  </script>
-</body>
-</html>
+
+        // Dividir resposta longa em pedaços
+        const partes = splitLongText(res, 1024);
+
+        if (partes.length === 1) {
+          combinedFields.push({
+            name: pergunta,
+            value: partes[0],
+            inline: false
+          });
+        } else {
+          partes.forEach((parte, i) => {
+            combinedFields.push({
+              name: `${pergunta} (parte ${i + 1}/${partes.length})`,
+              value: parte,
+              inline: false
+            });
+          });
+        }
