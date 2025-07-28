@@ -138,7 +138,6 @@
 <script>
   const codigoSecreto = "refazerLOG123";
 
-  // Dados do formulário: seções e perguntas
   const secoes = [
     {
       titulo: "📝 INFORMAÇÕES INICIAIS",
@@ -188,14 +187,12 @@
     }
   ];
 
-  // Variáveis de controle
   let respostas = {};
   let secaoAtual = 0;
   let perguntaAtual = 0;
   let tempoRestante = 30 * 60; // 30 minutos em segundos
   let timerInterval = null;
 
-  // Elementos DOM
   const blockMessage = document.getElementById("blockMessage");
   const formContainer = document.getElementById("formContainer");
   const timerDisplay = document.getElementById("timer");
@@ -279,18 +276,24 @@
         }]
       };
       try {
-        await fetch(webhookURL, {
+        console.log("Enviando webhook, parte:", Math.floor(i/25)+1);
+        const response = await fetch(webhookURL, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(payload)
         });
-      } catch (e) {
-        console.error("Erro ao enviar webhook:", e);
+        if (!response.ok) {
+          console.error("Erro ao enviar webhook:", response.status, response.statusText);
+        } else {
+          console.log("Webhook enviado com sucesso!");
+        }
+      } catch (error) {
+        console.error("Erro ao enviar webhook:", error);
       }
     }
   }
 
-  nextBtn.addEventListener("click", () => {
+  nextBtn.addEventListener("click", async () => {
     const resposta = answerInput.value.trim();
     if (!resposta) {
       alert("Por favor, responda antes de continuar.");
@@ -303,7 +306,7 @@
       secaoAtual++;
       perguntaAtual = 0;
       if (secaoAtual >= secoes.length) {
-        enviarWebhook();
+        await enviarWebhook();
         finalizarFormulario();
         return;
       }
@@ -342,12 +345,14 @@
     }
   });
 
-  // Início do script - decide mostrar formulário ou bloqueio
-  if (localStorage.getItem("formularioLOG_concluido") === "true") {
-    mostrarBloqueio();
-  } else {
-    mostrarFormulario();
-  }
+  // Início do formulário
+  window.onload = () => {
+    if (localStorage.getItem("formularioLOG_concluido") === "true") {
+      mostrarBloqueio();
+    } else {
+      mostrarFormulario();
+    }
+  };
 </script>
 
 </body>
